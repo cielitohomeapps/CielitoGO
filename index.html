@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cielito Go | Experiencias Exclusivas de Viaje</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <img src="media/CG3.png" alt="Cielito Go" class="logo-img">
+            </a>
+            <ul class="nav-links">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#destinos">Destinos</a></li>
+                <li><a href="#paquetes">Paquetes</a></li>
+                <li><a href="#nosotros">Nosotros</a></li>
+                <li><a href="#testimonios">Testimonios</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+                <li><a href="#contacto" class="mobile-cotizar">Cotiza tu viaje</a></li>
+            </ul>
+            <a href="#contacto" class="btn-cotizar">Cotiza tu viaje</a>
+            <button class="nav-toggle" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="hero-bg">
+            <video class="hero-bg-video" autoplay muted loop playsinline>
+                <source src="media/Contenido 2.mp4" type="video/mp4">
+            </video>
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="hero-subtitle">Crea Experiencias, No Solo</span>
+                Viajes
+            </h1>
+            
+            <!-- Search Form -->
+            <div class="search-form">
+                <div class="form-group">
+                    <label>DESTINO</label>
+                    <input type="text" placeholder="¿A dónde quieres ir?">
+                </div>
+                <div class="form-group">
+                    <label>FECHA SALIDA</label>
+                    <input type="text" placeholder="mm / dd / yyyy">
+                </div>
+                <div class="form-group">
+                    <label>VIAJEROS</label>
+                    <select>
+                        <option>2 Viajeros</option>
+                        <option>1 Viajero</option>
+                        <option>3 Viajeros</option>
+                        <option>4 Viajeros</option>
+                        <option>5+ Viajeros</option>
+                    </select>
+                </div>
+                <button class="btn-search">Explorar</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Destinations -->
+    <section class="destinations" id="destinos">
+        <div class="container">
+            <div class="section-header destinations-header">
+                <div>
+                    <span class="section-tag">SELECCIÓN PREMIUM</span>
+                    <h2 class="section-title">Destinos Destacados</h2>
+                </div>
+                <a href="#" class="link-all">Ver todos los destinos →</a>
+            </div>
+            
+            <div class="destinations-grid">
+                <!-- Destination Card 1 - Bali (Large Left) -->
+                <div class="destination-card card-large">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800" alt="Bali">
+                        <span class="badge">Más vendido</span>
+                        <div class="card-overlay">
+                            <h3 class="card-title">Bali, Indonesia</h3>
+                            <p class="card-description">Descubre la serenidad de los templos y selvas tropicales en un retiro espiritual sin precedentes.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Destination Card 2 - Costa Amalfitana (Top Right) -->
+                <div class="destination-card card-small">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=800" alt="Italia">
+                        <div class="card-overlay">
+                            <h3 class="card-title">Costa Amalfitana</h3>
+                            <p class="card-description">Elegancia costera italiana.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Destination Card 3 - Patagonia (Bottom Wide) -->
+                <div class="destination-card card-wide">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1531168556467-80aace0d0144?w=800" alt="Patagonia">
+                        <span class="badge">Más vendido</span>
+                        <div class="card-overlay">
+                            <h3 class="card-title">Patagonia, Chile</h3>
+                            <p class="card-description">Aventura extrema en el fin del mundo con comodidades de cinco estrellas.</p>
+                            <a href="#" class="btn-reserve">Reservar Ahora</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Packages Section -->
+    <section class="services" id="paquetes">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">EXCELENCIA EN EL SERVICIO</span>
+                <h2 class="section-title">Nuestros Paquetes</h2>
+            </div>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">✈</div>
+                    <h3>Vuelos Privados</h3>
+                    <p>Acceso a terminales exclusivas y jets privados para que tu viaje comience con la máxima comodidad y privacidad.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">🏨</div>
+                    <h3>Hoteles Boutique</h3>
+                    <p>Curamos una selección de propiedades únicas que combinan diseño arquitectónico, lujo y una conexión auténtica local.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">🎯</div>
+                    <h3>Tours Curados</h3>
+                    <p>Guías expertos locales diseñan experiencias fuera de lo común, desde cenas privadas en museos hasta expediciones secretas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="nosotros">
+        <div class="about-video-bg">
+
+            <div class="about-overlay"></div>
+        </div>
+        <div class="container">
+            <div class="about-content">
+                <span class="section-tag">NUESTRA HISTORIA</span>
+                <h2 class="section-title">Pasión por los detalles,<br>obsesión por la exclusividad</h2>
+                <p class="about-text">
+                    En Cielito Go, no creemos en los itinerarios prefabricados. Creemos que cada viajero es un autor y cada destino es una página en blanco esperando ser escrita.
+                </p>
+                <p class="about-text">
+                    Fundada por entusiastas de la cultura y el lujo, nuestra agencia nació con la misión de devolver el alma al acto de viajar. Nos encargamos de lo complejo para que tú solo te ocupes de vivir el momento.
+                </p>
+                <a href="#" class="btn-link">Conoce a nuestro equipo →</a>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-number">15</span>
+                        <span class="stat-label">AÑOS</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-text">CREANDO MEMORIAS</span>
+                        <span class="stat-text">INOLVIDABLES</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonios">
+        <div class="testimonials-video-bg">
+            <video class="testimonials-video" autoplay muted loop playsinline>
+                <source src="media/Contenido 3.mp4" type="video/mp4">
+            </video>
+            <div class="testimonials-overlay"></div>
+        </div>
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">LA VOZ DE NUESTROS VIAJEROS</span>
+                <h2 class="section-title">Experiencias que hablan por Sí Solas</h2>
+            </div>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">
+                        "Cielito Go transformó nuestra luna de miel en una epopeya cinematográfica. Cada hotel y cada cena superó nuestras expectativas. No volveremos a reservar con nadie más."
+                    </p>
+                    <div class="testimonial-author">
+                        <span class="author-name">Elena R.</span>
+                        <span class="author-trip">VIAJE A POLINESIA</span>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <p class="testimonial-text">
+                        "El servicio de conserjería 24/7 fue una salvación cuando perdimos nuestra conexión en Japón. En 30 minutos teníamos un jet privado y una reserva en un hotel de ensueño."
+                    </p>
+                    <div class="testimonial-author">
+                        <span class="author-name">Marc S.</span>
+                        <span class="author-trip">AVENTURA EN KIOTO</span>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <p class="testimonial-text">
+                        "Nuestra expedición a la Antártida fue impecable. La atención al detalle de Cielito Go nos permitió enfocarnos solo en la belleza del paisaje."
+                    </p>
+                    <div class="testimonial-author">
+                        <span class="author-name">Lucía M.</span>
+                        <span class="author-trip">EXPEDICIÓN GLACIAR</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contacto">
+        <div class="container">
+            <div class="contact-wrapper">
+                <div class="contact-info">
+                    <span class="section-tag">CONTACTO EXCLUSIVO</span>
+                    <h2 class="section-title">Empecemos a diseñar tu próximo capítulo</h2>
+                    <p class="contact-description">
+                        Completa el formulario y uno de nuestros concierges se pondrá en contacto contigo en menos de 24 horas para una consultoría personalizada.
+                    </p>
+                    
+                    <div class="office-info">
+                        <h3>Nuestras Oficinas</h3>
+                        <p>Avenida de la Exclusividad 120, Piso 4</p>
+                        <p>Distrito de Lujo, Aguascalientes, Aguascalientes</p>
+                    </div>
+                    
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <span class="contact-icon">📞</span>
+                            <span>+34 910 000 000</span>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">✉</span>
+                            <span>cielito.go@outlook.com</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <form class="contact-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" placeholder="Nombre completo" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" placeholder="Correo electrónico" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <select required>
+                            <option value="" disabled selected>Destino de interés</option>
+                            <option>Bali, Indonesia</option>
+                            <option>Patagonia, Chile</option>
+                            <option>Costa Amalfitana, Italia</option>
+                            <option>Polinesia Francesa</option>
+                            <option>Japón</option>
+                            <option>Antártida</option>
+                            <option>Otro destino</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <textarea placeholder="Cuéntanos sobre tu viaje ideal..." rows="4"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">ENVIAR SOLICITUD</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+            <a href="#" class="logo">
+                <img src="media/CG3.png" alt="Cielito Go" class="logo-img">
+            </a>
+                    <p>Creamos experiencias de viaje exclusivas que transforman tu visión del mundo.</p>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Destinos</h4>
+                        <ul>
+                            <li><a href="#">Bali</a></li>
+                            <li><a href="#">Patagonia</a></li>
+                            <li><a href="#">Italia</a></li>
+                            <li><a href="#">Japón</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h4>Paquetes</h4>
+                        <ul>
+                            <li><a href="#">Luna de Miel</a></li>
+                            <li><a href="#">Aventura</a></li>
+                            <li><a href="#">Relajación</a></li>
+                            <li><a href="#">Familiar</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h4>Empresa</h4>
+                        <ul>
+                            <li><a href="#">Sobre Nosotros</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">Contacto</a></li>
+                            <li><a href="#">Cotiza tu viaje</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2026 Cielito Go. Todos los derechos reservados.</p>
+                <div class="footer-social">
+                    <a href="#">Instagram</a>
+                    <a href="#">Facebook</a>
+                    <a href="#">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
