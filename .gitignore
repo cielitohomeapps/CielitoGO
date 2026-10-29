@@ -1,15 +1,19 @@
-# Videos
-*.mp4
+# Repository-wide local files
+**/node_modules/
+**/.env
+**/.env.local
+**/.next/
+**/coverage/
+**/dist/
+**/public/uploads/*
+!**/public/uploads/.gitkeep
 
-# Backup
-.git_backup/
+# Preserved metadata from the backend's former standalone repository
+CielitoGoBackend/.git-local-backup/
 
-# OS files
-Thumbs.db
-Desktop.ini
+# OS and editor files
 .DS_Store
-
-# Editor files
-.vscode/
-*.swp
-*.swo
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
