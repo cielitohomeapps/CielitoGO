@@ -1,0 +1,49 @@
+services:
+  - type: web
+    runtime: node
+    name: cielitogo-api
+    rootDir: CielitoGoBackend
+    buildCommand: npm ci
+    preDeployCommand: npm run migrate
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 20.19.0
+      - key: NODE_ENV
+        value: production
+      - key: DB_SSL
+        value: "true"
+      - key: TRUST_PROXY
+        value: "1"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: JWT_EXPIRATION
+        value: 24h
+      - key: JWT_ISSUER
+        value: cielito-go-api
+      - key: JWT_AUDIENCE
+        value: cielito-go-admin
+
+  - type: web
+    runtime: node
+    name: cielitogo-web
+    rootDir: CielitoGoFrontend
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 20.19.0
+      - key: NODE_ENV
+        value: production
+      - key: API_BASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false
+      - key: TRUST_BACKEND_PUBLIC_SETTINGS
+        value: "false"
