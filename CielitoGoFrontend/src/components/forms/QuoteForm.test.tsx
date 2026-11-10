@@ -67,6 +67,23 @@ describe("QuoteForm", () => {
     expect(await screen.findByRole("status")).toHaveTextContent(validResponse.quote.id);
   });
 
+  it("prepara la cotización con los datos del formulario en WhatsApp", () => {
+    const openMock = vi.fn();
+    vi.stubGlobal("open", openMock);
+    render(<QuoteForm advisorUrl="https://wa.me/524491234567" />);
+    fillRequiredFields();
+
+    fireEvent.click(screen.getByRole("button", { name: /preparar cotización por whatsapp/i }));
+
+    expect(openMock).toHaveBeenCalledOnce();
+    const [openedUrl, target, features] = openMock.mock.calls[0] as [string, string, string];
+    expect(target).toBe("_blank");
+    expect(features).toContain("noopener");
+    const message = new URL(openedUrl).searchParams.get("text");
+    expect(message).toContain("Nombre: Ana Viajera");
+    expect(message).toContain("Destino: Patagonia");
+  });
+
   it("no debe anunciar éxito cuando el backend responde 200", async () => {
     const fetchMock = vi.fn().mockResolvedValue(mockJsonResponse(200, validResponse));
     vi.stubGlobal("fetch", fetchMock);

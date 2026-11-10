@@ -50,7 +50,7 @@ Después, revisa `.env.local` antes de iniciar el proyecto.
 | `NEXT_PUBLIC_SITE_URL` | Pública | Sí para producción | URL canónica del frontend utilizada en metadata, `robots.txt` y sitemap. |
 | `TRUST_BACKEND_PUBLIC_SETTINGS` | Sólo servidor | No | Debe permanecer en `false` hasta comprobar que los contactos y redes de la base de datos son oficiales y no valores de demostración. |
 | `NEXT_PUBLIC_CONTACT_EMAIL` | Pública | No | Campo reservado para un contacto confirmado; puede dejarse vacío mientras no exista aprobación. |
-| `NEXT_PUBLIC_ADVISOR_URL` | Pública | No | Campo reservado para un canal de asesoría confirmado; puede dejarse vacío mientras no exista aprobación. |
+| `NEXT_PUBLIC_ADVISOR_URL` | Pública | No | URL HTTPS confirmada de WhatsApp (`https://wa.me/<número>` o `https://api.whatsapp.com/send`); al configurarla se habilita la cotización por WhatsApp. |
 
 Nunca agregues secretos, tokens ni credenciales reales a variables con prefijo `NEXT_PUBLIC_`. No confirmes `API_BASE_URL` ni `.env.local` en Git.
 

@@ -61,7 +61,6 @@ export default async function Page() {
       tours={tours}
       promotions={promotions}
       contact={contact}
-      catalogAvailable={toursResult.status === "fulfilled"}
     />
   );
 }

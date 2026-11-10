@@ -484,36 +484,11 @@ h3 {
   background: linear-gradient(180deg, rgb(0 0 0 / 4%) 35%, rgb(0 25 22 / 78%));
 }
 
-.destination-card__status {
-  position: absolute;
-  top: 1.5rem;
-  left: 1.5rem;
-  max-width: calc(100% - 3rem);
-  border-radius: 999px;
-  margin: 0;
-  padding: 0.5rem 0.8rem;
-  background: rgb(248 221 165 / 94%);
-  color: var(--color-pine-deep);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  line-height: 1.3;
-  text-transform: uppercase;
-}
-
 .destination-card__content {
   position: absolute;
   right: clamp(1.5rem, 4vw, 3rem);
   bottom: clamp(1.5rem, 4vw, 3rem);
   left: clamp(1.5rem, 4vw, 3rem);
-}
-
-.destination-card__content p {
-  margin-bottom: 0.25rem;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
 }
 
 .destination-card__content h3 {
@@ -617,14 +592,6 @@ h3 {
   font-weight: 600;
 }
 
-.data-note {
-  max-width: 50rem;
-  margin: 2rem auto 0;
-  color: var(--color-muted);
-  font-size: 0.8rem;
-  text-align: center;
-}
-
 .service-story {
   display: grid;
   min-height: 43rem;
@@ -655,20 +622,6 @@ h3 {
 .service-story__media img {
   object-fit: cover;
   object-position: center;
-}
-
-.media-caption {
-  position: absolute;
-  z-index: 3;
-  right: 1rem;
-  bottom: 1rem;
-  max-width: 14rem;
-  margin: 0;
-  padding: 0.55rem 0.7rem;
-  background: rgb(250 249 247 / 92%);
-  color: var(--color-body);
-  font-size: 0.75rem;
-  letter-spacing: 0.04em;
 }
 
 .service-story__content .button {
@@ -776,6 +729,10 @@ h3 {
   padding: clamp(1.5rem, 4vw, 3rem);
   background: var(--color-white);
   box-shadow: var(--shadow-soft);
+}
+
+.quote-form__whatsapp {
+  margin-top: 0.75rem;
 }
 
 .quote-form__intro h3 {
@@ -1286,12 +1243,6 @@ h3 {
 
   .destination-card--wide {
     min-height: 22rem;
-  }
-
-  .destination-card__status {
-    top: 1rem;
-    left: 1rem;
-    max-width: calc(100% - 2rem);
   }
 
   .verified-strip__items,

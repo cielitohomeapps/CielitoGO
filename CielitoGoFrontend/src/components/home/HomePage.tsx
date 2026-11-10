@@ -6,7 +6,7 @@ import { QuoteForm } from "@/components/forms/QuoteForm";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import {
-  editorialDestinations,
+  featuredDestinations,
   experienceCategories,
   functionalCopy,
   planningBenefits,
@@ -39,14 +39,13 @@ type HomePageProps = {
   tours: TourCardView[];
   promotions: PromotionView[];
   contact: PublicContactView;
-  catalogAvailable: boolean;
 };
 
-export function HomePage({ tours, promotions, contact, catalogAvailable }: HomePageProps) {
+export function HomePage({ tours, promotions, contact }: HomePageProps) {
   const quoteDestinations = Array.from(
     new Set([
       ...tours.map((tour) => tour.location || tour.name),
-      ...editorialDestinations.map((destination) => `${destination.name}, ${destination.country}`),
+      ...featuredDestinations.map((destination) => destination.name),
     ]),
   );
 
@@ -96,8 +95,8 @@ export function HomePage({ tours, promotions, contact, catalogAvailable }: HomeP
               </div>
             </Reveal>
 
-            <div className="destination-grid" aria-label="Destinos de inspiración editorial">
-              {editorialDestinations.map((destination, index) => (
+            <div className="destination-grid" aria-label="Destinos para viajar">
+              {featuredDestinations.map((destination, index) => (
                 <Reveal
                   as="article"
                   className={`destination-card destination-card--${destination.layout}`}
@@ -112,9 +111,7 @@ export function HomePage({ tours, promotions, contact, catalogAvailable }: HomeP
                     className="destination-card__image"
                   />
                   <div className="destination-card__scrim" />
-                  <p className="destination-card__status">{siteContent.destinations.provisionalLabel}</p>
                   <div className="destination-card__content">
-                    <p>{destination.country}</p>
                     <h3>{destination.name}</h3>
                   </div>
                 </Reveal>
@@ -175,14 +172,13 @@ export function HomePage({ tours, promotions, contact, catalogAvailable }: HomeP
                 ))}
               </div>
             ) : (
-              <div className="experience-grid" aria-label="Categorías editoriales provisionales">
+              <div className="experience-grid" aria-label="Experiencias para cada estilo de viaje">
                 {experienceCategories.map((experience, index) => (
                   <Reveal as="article" className="experience-card" delay={index * 80} key={experience.title}>
                     <div className="experience-card__media">
                       <Image src={experience.image} alt={experience.alt} fill sizes="(max-width: 767px) 100vw, 33vw" />
                     </div>
                     <div className="experience-card__content">
-                      <p className="eyebrow">{functionalCopy.provisional}</p>
                       <h3>{experience.title}</h3>
                       <p>{experience.body}</p>
                     </div>
@@ -191,11 +187,6 @@ export function HomePage({ tours, promotions, contact, catalogAvailable }: HomeP
               </div>
             )}
 
-            {!catalogAvailable ? (
-              <p className="data-note" role="status">
-                El catálogo dinámico no está disponible; estas categorías son inspiración editorial y no confirman una oferta comercial.
-              </p>
-            ) : null}
           </div>
         </section>
 
@@ -209,7 +200,6 @@ export function HomePage({ tours, promotions, contact, catalogAvailable }: HomeP
                   fill
                   sizes="(max-width: 767px) 100vw, 46vw"
                 />
-                <p className="media-caption">Fotografía de referencia del mockup de Figma</p>
               </Reveal>
               <Reveal className="service-story__content" delay={90}>
                 <SectionHeading
@@ -275,7 +265,7 @@ export function HomePage({ tours, promotions, contact, catalogAvailable }: HomeP
               )}
             </Reveal>
             <Reveal className="conversion__form" delay={100}>
-              <QuoteForm destinationOptions={quoteDestinations} />
+              <QuoteForm destinationOptions={quoteDestinations} advisorUrl={contact.advisorUrl} />
             </Reveal>
           </div>
         </section>

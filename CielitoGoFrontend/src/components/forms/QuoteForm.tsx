@@ -10,17 +10,30 @@ type SubmissionState =
 
 type QuoteFormProps = {
   destinationOptions?: string[];
+  advisorUrl?: string | null;
 };
 
-export function QuoteForm({ destinationOptions = [] }: QuoteFormProps) {
+function isWhatsAppUrl(value: string | null | undefined): value is string {
+  if (!value) return false;
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" && ["wa.me", "api.whatsapp.com"].includes(url.hostname.toLowerCase());
+  } catch {
+    return false;
+  }
+}
+
+export function QuoteForm({ destinationOptions = [], advisorUrl }: QuoteFormProps) {
   const [adults, setAdults] = useState(2);
   const [minors, setMinors] = useState(0);
   const [departureDate, setDepartureDate] = useState("");
   const [submission, setSubmission] = useState<SubmissionState>({ status: "idle" });
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const successRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const travelers = useMemo(() => adults + minors, [adults, minors]);
   const today = new Date().toISOString().slice(0, 10);
+  const whatsappUrl = isWhatsAppUrl(advisorUrl) ? advisorUrl : null;
 
   useEffect(() => {
     if (submission.status === "success") successRef.current?.focus();
@@ -118,6 +131,34 @@ export function QuoteForm({ destinationOptions = [] }: QuoteFormProps) {
     }
   }
 
+  function handleWhatsAppQuote() {
+    const form = formRef.current;
+    if (!form || !whatsappUrl) return;
+
+    const data = new FormData(form);
+    const fields = [
+      ["Nombre", data.get("customerName")],
+      ["Correo", data.get("email")],
+      ["Teléfono", data.get("phone")],
+      ["Destino", data.get("destination")],
+      ["Adultos", adults],
+      ["Menores", minors],
+      ["Total de viajeros", travelers],
+      ["Salida", data.get("departureDate")],
+      ["Regreso", data.get("returnDate")],
+      ["Presupuesto", data.get("budget")],
+      ["Comentarios", data.get("comments")],
+    ].filter(([, value]) => String(value ?? "").trim());
+    const message = [
+      "Hola, quiero solicitar una cotización de viaje.",
+      "",
+      ...fields.map(([label, value]) => `${label}: ${value}`),
+    ].join("\n");
+    const url = new URL(whatsappUrl);
+    url.searchParams.set("text", message);
+    window.open(url.toString(), "_blank", "noopener,noreferrer");
+  }
+
   if (submission.status === "success") {
     return (
       <div className="quote-success" role="status" tabIndex={-1} ref={successRef}>
@@ -134,7 +175,7 @@ export function QuoteForm({ destinationOptions = [] }: QuoteFormProps) {
   }
 
   return (
-    <form className="quote-form" onSubmit={handleSubmit} noValidate={false}>
+    <form className="quote-form" onSubmit={handleSubmit} noValidate={false} ref={formRef}>
       <div className="quote-form__intro">
         <p className="eyebrow">Solicitud de cotización</p>
         <h3>Cuéntanos lo esencial.</h3>
@@ -245,6 +286,14 @@ export function QuoteForm({ destinationOptions = [] }: QuoteFormProps) {
       <button className="button button--primary button--wide" type="submit" disabled={submission.status === "submitting"}>
         {submission.status === "submitting" ? "Enviando solicitud…" : "Enviar solicitud de cotización"}
       </button>
+      {whatsappUrl ? (
+        <>
+          <button className="button button--outline button--wide quote-form__whatsapp" type="button" onClick={handleWhatsAppQuote}>
+            Preparar cotización por WhatsApp
+          </button>
+          <p className="form-footnote">WhatsApp se abrirá con el mensaje listo; revísalo y envíalo desde la aplicación.</p>
+        </>
+      ) : null}
       <p className="form-footnote">La confirmación sólo aparece cuando el backend acepta la solicitud.</p>
     </form>
   );

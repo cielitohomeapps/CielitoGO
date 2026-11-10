@@ -15,11 +15,10 @@ export const siteContent = {
     secondaryCta: "Cotizar mi viaje",
   },
   destinations: {
-    eyebrow: "Inspiración para tu próxima historia",
+    eyebrow: "Descubre tu próximo destino",
     title: "Hay lugares que se visitan. Otros que se quedan contigo.",
     body: "Desde playas para desconectarte hasta ciudades llenas de cultura, encuentra el destino que conecta con tu manera de viajar.",
     cta: "Explorar destinos",
-    provisionalLabel: "Inspiración editorial · disponibilidad por confirmar",
   },
   experiences: {
     eyebrow: "Tu manera de viajar",
@@ -54,27 +53,24 @@ export const siteContent = {
   },
 } as const;
 
-export const editorialDestinations = [
+export const featuredDestinations = [
   {
-    id: "editorial-retreat",
+    id: "retreat",
     name: "Refugios entre naturaleza",
-    country: "Inspiración de viaje",
     image: "/images/travel/tropical-retreat.png",
     alt: "Alberca de piedra frente a un paisaje tropical al atardecer",
     layout: "featured",
   },
   {
-    id: "editorial-coast",
+    id: "coast",
     name: "Costas que guardan historias",
-    country: "Inspiración de viaje",
     image: "/images/travel/coastal-evening.png",
     alt: "Poblado costero iluminado al caer la noche",
     layout: "portrait",
   },
   {
-    id: "editorial-mountain",
+    id: "mountain",
     name: "Horizontes de montaña",
-    country: "Inspiración de viaje",
     image: "/images/travel/alpine-lake.png",
     alt: "Lago rodeado de montañas y nubes bajas",
     layout: "wide",
@@ -86,19 +82,19 @@ export const experienceCategories = [
     title: "Escapadas para desconectarte",
     body: "Pausas frente al mar, la naturaleza o un paisaje que invite a respirar distinto.",
     image: "/images/travel/tropical-retreat.png",
-    alt: "Refugio tropical usado como inspiración editorial",
+    alt: "Refugio tropical rodeado de naturaleza",
   },
   {
     title: "Aventuras para descubrir",
     body: "Rutas que abren nuevas perspectivas y dejan espacio para la sorpresa.",
     image: "/images/travel/alpine-lake.png",
-    alt: "Paisaje de montaña usado como inspiración editorial",
+    alt: "Lago rodeado de montañas",
   },
   {
     title: "Cultura para ampliar horizontes",
     body: "Ciudades, sabores y encuentros que conectan cada destino con su historia.",
     image: "/images/travel/coastal-evening.png",
-    alt: "Poblado costero usado como inspiración editorial",
+    alt: "Poblado costero iluminado al anochecer",
   },
 ] as const;
 
@@ -126,5 +122,4 @@ export const functionalCopy = {
   skipToContent: "Saltar al contenido",
   loading: "Cargando opciones disponibles…",
   unavailable: "No pudimos consultar las opciones disponibles en este momento.",
-  provisional: "Contenido editorial provisional",
 } as const;
