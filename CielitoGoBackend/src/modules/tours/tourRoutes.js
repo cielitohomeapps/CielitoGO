@@ -41,7 +41,7 @@ router.post('/', authenticate, authorize('admin', 'editor'), upload.single('imag
   body('conditions').optional().isArray({ max: 100 }),
   body('itinerary').optional().isArray({ max: 100 }),
   validate,
-], tourController.create);
+], upload.storeImage('tours'), tourController.create);
 
 router.put('/:id', authenticate, authorize('admin', 'editor'), upload.single('image'), upload.validateImages, parseJsonFields('highlights', 'includes', 'excludes', 'restrictions', 'conditions', 'itinerary'), [
   param('id').isUUID(),
@@ -60,7 +60,7 @@ router.put('/:id', authenticate, authorize('admin', 'editor'), upload.single('im
   body('conditions').optional().isArray({ max: 100 }),
   body('itinerary').optional().isArray({ max: 100 }),
   validate,
-], tourController.update);
+], upload.storeImage('tours'), tourController.update);
 router.delete('/:id', authenticate, authorize('admin'), [param('id').isUUID(), validate], tourController.delete);
 
 router.post('/:id/images', authenticate, authorize('admin', 'editor'), upload.single('image'), upload.validateImages, [
@@ -68,7 +68,7 @@ router.post('/:id/images', authenticate, authorize('admin', 'editor'), upload.si
   body('sortOrder').optional().isInt({ min: 0 }),
   body('isPrimary').optional().isBoolean(),
   validate,
-], tourController.addImage);
+], upload.storeImage('tours/gallery'), tourController.addImage);
 router.delete('/:id/images/:imageId', authenticate, authorize('admin'), [
   param('id').isUUID(),
   param('imageId').isUUID(),

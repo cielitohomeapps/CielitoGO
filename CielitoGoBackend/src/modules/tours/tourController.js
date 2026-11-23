@@ -1,7 +1,6 @@
-const fs = require('fs');
-const path = require('path');
 const { Op } = require('sequelize');
 const { Tour, TourImage, Pricing } = require('../../models');
+const upload = require('../../middleware/upload');
 const toSlug = require('../../utils/slug');
 
 const generateSlug = (text) => {
@@ -69,6 +68,7 @@ exports.getById = async (req, res, next) => {
 };
 
 exports.create = async (req, res, next) => {
+  let imageStored = false;
   try {
     const {
       name, description, shortDescription, duration, price,
@@ -78,6 +78,7 @@ exports.create = async (req, res, next) => {
 
     const slug = generateSlug(name);
 
+    const storedImage = upload.getStoredImage(req.file);
     const tour = await Tour.create({
       name,
       slug,
@@ -95,25 +96,35 @@ exports.create = async (req, res, next) => {
       restrictions: restrictions || [],
       conditions: conditions || [],
       itinerary: itinerary || [],
-      imageUrl: req.file ? `/uploads/${req.file.filename}` : null,
+      imageUrl: storedImage?.imageUrl || null,
+      imagePublicId: storedImage?.publicId || null,
       metaTitle,
       metaDescription,
     });
+    imageStored = true;
 
     res.status(201).json({ tour });
   } catch (error) {
+    if (req.file && !imageStored) {
+      try {
+        await upload.removeStoredImage(upload.getStoredImage(req.file));
+      } catch (cleanupError) {
+        console.error('Unable to remove failed tour upload:', cleanupError.message);
+      }
+    }
     next(error);
   }
 };
 
 exports.update = async (req, res, next) => {
+  let imageStored = false;
   try {
     const tour = await Tour.findByPk(req.params.id);
     if (!tour) {
       const error = new Error('Tour no encontrado');
       error.status = 404;
       error.code = 'TOUR_NOT_FOUND';
-      return next(error);
+      throw error;
     }
 
     const allowedFields = [
@@ -125,27 +136,35 @@ exports.update = async (req, res, next) => {
     const updates = Object.fromEntries(
       allowedFields.filter((field) => req.body[field] !== undefined).map((field) => [field, req.body[field]])
     );
-    let oldImagePath;
+    let oldImage;
     if (req.file) {
-      updates.imageUrl = `/uploads/${req.file.filename}`;
-      if (tour.imageUrl) {
-        oldImagePath = path.join(__dirname, '../../../public', tour.imageUrl);
-      }
+      const storedImage = upload.getStoredImage(req.file);
+      updates.imageUrl = storedImage.imageUrl;
+      updates.imagePublicId = storedImage.publicId;
+      oldImage = { imageUrl: tour.imageUrl, publicId: tour.imagePublicId };
     }
     if (updates.name && !req.body.slug) {
       updates.slug = generateSlug(updates.name);
     }
 
     await tour.update(updates);
-    if (oldImagePath) {
+    imageStored = true;
+    if (oldImage?.imageUrl) {
       try {
-        if (fs.existsSync(oldImagePath)) fs.unlinkSync(oldImagePath);
+        await upload.removeStoredImage(oldImage);
       } catch (cleanupError) {
         console.error('Unable to remove previous tour image:', cleanupError.message);
       }
     }
     res.json({ tour });
   } catch (error) {
+    if (req.file && !imageStored) {
+      try {
+        await upload.removeStoredImage(upload.getStoredImage(req.file));
+      } catch (cleanupError) {
+        console.error('Unable to remove failed tour upload:', cleanupError.message);
+      }
+    }
     next(error);
   }
 };
@@ -157,7 +176,7 @@ exports.delete = async (req, res, next) => {
       const error = new Error('Tour no encontrado');
       error.status = 404;
       error.code = 'TOUR_NOT_FOUND';
-      return next(error);
+      throw error;
     }
     await tour.update({ isActive: false });
     res.json({ message: 'Tour desactivado' });
@@ -167,29 +186,40 @@ exports.delete = async (req, res, next) => {
 };
 
 exports.addImage = async (req, res, next) => {
+  let imageStored = false;
   try {
     const tour = await Tour.findByPk(req.params.id);
     if (!tour) {
       const error = new Error('Tour no encontrado');
       error.status = 404;
       error.code = 'TOUR_NOT_FOUND';
-      return next(error);
+      throw error;
     }
 
     if (!req.file) {
       return res.status(400).json({ error: 'Imagen requerida' });
     }
 
+    const storedImage = upload.getStoredImage(req.file);
     const image = await TourImage.create({
       tourId: tour.id,
-      imageUrl: `/uploads/${req.file.filename}`,
+      imageUrl: storedImage.imageUrl,
+      publicId: storedImage.publicId,
       alt: req.body.alt || tour.name,
       sortOrder: req.body.sortOrder || 0,
       isPrimary: req.body.isPrimary || false,
     });
+    imageStored = true;
 
     res.status(201).json({ image });
   } catch (error) {
+    if (req.file && !imageStored) {
+      try {
+        await upload.removeStoredImage(upload.getStoredImage(req.file));
+      } catch (cleanupError) {
+        console.error('Unable to remove failed tour gallery upload:', cleanupError.message);
+      }
+    }
     next(error);
   }
 };
@@ -203,10 +233,12 @@ exports.deleteImage = async (req, res, next) => {
       return res.status(404).json({ error: 'Imagen no encontrada' });
     }
 
-    const imagePath = path.join(__dirname, '../../../public', image.imageUrl);
-    if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
-
     await image.destroy();
+    try {
+      await upload.removeStoredImage({ imageUrl: image.imageUrl, publicId: image.publicId });
+    } catch (cleanupError) {
+      console.error('Unable to remove tour image:', cleanupError.message);
+    }
     res.json({ message: 'Imagen eliminada' });
   } catch (error) {
     next(error);

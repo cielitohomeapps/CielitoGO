@@ -23,8 +23,12 @@ export function resolveBackendAssetUrl(
 
   try {
     const resolved = new URL(value, `${baseUrl.origin}/`);
+    const isCloudinaryImage =
+      resolved.protocol === "https:" &&
+      resolved.hostname === "res.cloudinary.com" &&
+      /^\/[a-zA-Z0-9_-]+\/image\/upload\//.test(resolved.pathname);
     if (
-      resolved.origin !== baseUrl.origin ||
+      (resolved.origin !== baseUrl.origin && !isCloudinaryImage) ||
       !["http:", "https:"].includes(resolved.protocol)
     ) {
       return null;

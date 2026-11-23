@@ -12,6 +12,7 @@ const { getPagination, paginationResponse } = require('../../utils/pagination');
 const { validateDateRange, validateParty } = require('../../utils/domainValidation');
 const { quoteTransitions, assertTransition } = require('../../utils/workflow');
 const { createReservation } = require('../reservations/reservationService');
+const generateQuoteCode = require('../../utils/quoteCode');
 
 const quoteFields = [
   'customerId', 'customerName', 'phone', 'email', 'destination', 'departureDate',
@@ -39,7 +40,12 @@ exports.create = async (req, res, next) => {
     validateDateRange(data.departureDate, data.returnDate);
     validateParty(data);
     const quote = await sequelize.transaction(async (transaction) => {
-      const created = await Quote.create({ ...data, minors: data.minors || 0, status: 'new' }, { transaction });
+      const created = await Quote.create({
+        ...data,
+        code: generateQuoteCode(),
+        minors: data.minors || 0,
+        status: 'new',
+      }, { transaction });
       await QuoteStatusHistory.create({
         quoteId: created.id,
         fromStatus: null,
@@ -49,7 +55,7 @@ exports.create = async (req, res, next) => {
       }, { transaction });
       return created;
     });
-    res.status(201).json({ quote: { id: quote.id, status: quote.status, createdAt: quote.createdAt } });
+    res.status(201).json({ quote: { id: quote.id, code: quote.code, status: quote.status, createdAt: quote.createdAt } });
   } catch (error) {
     next(error);
   }

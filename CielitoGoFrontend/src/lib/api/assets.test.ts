@@ -17,11 +17,23 @@ describe("resolveBackendAssetUrl", () => {
     ).toBe("https://api.example.com/uploads/tour.webp");
   });
 
+  it("acepta imágenes servidas por Cloudinary", () => {
+    expect(
+      resolveBackendAssetUrl(
+        "https://res.cloudinary.com/cielito-go/image/upload/v1/cielito-go/tours/playa.webp",
+        baseUrl,
+      ),
+    ).toBe("https://res.cloudinary.com/cielito-go/image/upload/v1/cielito-go/tours/playa.webp");
+  });
+
   it("rechaza protocolos peligrosos y orígenes externos", () => {
     expect(resolveBackendAssetUrl("javascript:alert(1)", baseUrl)).toBeNull();
     expect(resolveBackendAssetUrl("//tracker.example/pixel", baseUrl)).toBeNull();
     expect(
       resolveBackendAssetUrl("https://tracker.example/pixel", baseUrl),
+    ).toBeNull();
+    expect(
+      resolveBackendAssetUrl("https://res.cloudinary.com/cielito-go/raw/upload/file.txt", baseUrl),
     ).toBeNull();
   });
 });

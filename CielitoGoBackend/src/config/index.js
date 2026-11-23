@@ -63,6 +63,18 @@ module.exports = {
     maxPixels: positiveInteger(process.env.MAX_IMAGE_PIXELS, 40000000),
   },
 
+  cloudinary: {
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+    apiKey: process.env.CLOUDINARY_API_KEY,
+    apiSecret: process.env.CLOUDINARY_API_SECRET,
+    folder: process.env.CLOUDINARY_FOLDER || 'cielito-go',
+    enabled: Boolean(
+      process.env.CLOUDINARY_CLOUD_NAME
+      && process.env.CLOUDINARY_API_KEY
+      && process.env.CLOUDINARY_API_SECRET
+    ),
+  },
+
   requestBodyLimit: process.env.REQUEST_BODY_LIMIT || '1mb',
 
   rateLimit: {

@@ -40,12 +40,12 @@ router.post('/', authenticate, authorize('admin', 'editor'), upload.single('imag
   body('description').trim().isLength({ min: 1, max: 10000 }),
   ...writeValidators,
   validate,
-], controller.create);
+], upload.storeImage('promotions'), controller.create);
 router.put('/:id', authenticate, authorize('admin', 'editor'), upload.single('image'), upload.validateImages, parseJsonFields('restrictions', 'conditions'), [
   param('id').isUUID(),
   ...writeValidators,
   validate,
-], controller.update);
+], upload.storeImage('promotions'), controller.update);
 router.delete('/:id', authenticate, authorize('admin'), [param('id').isUUID(), validate], controller.deactivate);
 router.post('/:id/images', authenticate, authorize('admin', 'editor'), upload.single('image'), upload.validateImages, [
   param('id').isUUID(),
@@ -53,7 +53,7 @@ router.post('/:id/images', authenticate, authorize('admin', 'editor'), upload.si
   body('sortOrder').optional().isInt({ min: 0 }).toInt(),
   body('isPrimary').optional().isBoolean().toBoolean(),
   validate,
-], controller.addImage);
+], upload.storeImage('promotions/gallery'), controller.addImage);
 router.delete('/:id/images/:imageId', authenticate, authorize('admin'), [
   param('id').isUUID(),
   param('imageId').isUUID(),

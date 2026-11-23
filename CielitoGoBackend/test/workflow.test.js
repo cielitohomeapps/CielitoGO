@@ -4,6 +4,11 @@ const assert = require('node:assert/strict');
 const { quoteTransitions, reservationTransitions, assertTransition } = require('../src/utils/workflow');
 const { validateDateRange, validateParty } = require('../src/utils/domainValidation');
 const toSlug = require('../src/utils/slug');
+const generateQuoteCode = require('../src/utils/quoteCode');
+
+test('quote codes use a readable yearly public reference', () => {
+  assert.match(generateQuoteCode(new Date('2026-11-12T12:00:00Z')), /^CG-2026-[A-Z2-9]{5}$/);
+});
 
 test('quote workflow allows only declared transitions', () => {
   assert.doesNotThrow(() => assertTransition(quoteTransitions, 'new', 'reviewing', 'la cotización'));

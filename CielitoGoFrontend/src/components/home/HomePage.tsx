@@ -3,7 +3,10 @@ import Image from "next/image";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { QuoteForm } from "@/components/forms/QuoteForm";
+import { PackageCard, type PackageCardView } from "@/components/home/PackageCard";
+import { PromotionFeature, type PromotionView } from "@/components/home/PromotionFeature";
 import { Reveal } from "@/components/ui/Reveal";
+import { BrandJourneyIcon } from "@/components/ui/BrandJourneyIcon";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import {
   featuredDestinations,
@@ -13,21 +16,6 @@ import {
   siteContent,
 } from "@/content/es";
 
-export type TourCardView = {
-  id: string;
-  name: string;
-  summary: string;
-  location?: string | null;
-  duration?: string | null;
-  image?: string | null;
-};
-
-export type PromotionView = {
-  id: string;
-  title: string;
-  description?: string | null;
-};
-
 export type PublicContactView = {
   email?: string | null;
   instagramUrl?: string | null;
@@ -36,12 +24,22 @@ export type PublicContactView = {
 };
 
 type HomePageProps = {
-  tours: TourCardView[];
+  tours: PackageCardView[];
   promotions: PromotionView[];
+  catalogStatus: "ready" | "empty" | "unavailable";
   contact: PublicContactView;
 };
 
-export function HomePage({ tours, promotions, contact }: HomePageProps) {
+function isLoopbackImage(url: string | null | undefined) {
+  if (!url) return false;
+  try {
+    return ["localhost", "127.0.0.1", "::1"].includes(new URL(url).hostname);
+  } catch {
+    return false;
+  }
+}
+
+export function HomePage({ tours, promotions, catalogStatus, contact }: HomePageProps) {
   const quoteDestinations = Array.from(
     new Set([
       ...tours.map((tour) => tour.location || tour.name),
@@ -91,7 +89,7 @@ export function HomePage({ tours, promotions, contact }: HomePageProps) {
                   title={siteContent.destinations.title}
                   body={siteContent.destinations.body}
                 />
-                <a className="text-link" href="#experiencias">{siteContent.destinations.cta}<span aria-hidden="true">→</span></a>
+                <a className="text-link" href="#paquetes">{siteContent.destinations.cta}<span aria-hidden="true">→</span></a>
               </div>
             </Reveal>
 
@@ -118,19 +116,40 @@ export function HomePage({ tours, promotions, contact }: HomePageProps) {
               ))}
             </div>
 
-            {promotions.length ? (
-              <Reveal className="verified-strip">
-                <p className="eyebrow">Información vigente desde la API</p>
-                <div className="verified-strip__items">
-                  {promotions.slice(0, 3).map((promotion) => (
-                    <article key={promotion.id}>
-                      <h3>{promotion.title}</h3>
-                      {promotion.description ? <p>{promotion.description}</p> : null}
-                    </article>
-                  ))}
+          </div>
+        </section>
+
+        <section id="paquetes" className="section section--packages" aria-labelledby="packages-title">
+          <div className="shell">
+            <Reveal>
+              <SectionHeading
+                id="packages-title"
+                eyebrow={siteContent.packages.eyebrow}
+                title={siteContent.packages.title}
+                body={siteContent.packages.body}
+              />
+            </Reveal>
+
+            {promotions.length ? <Reveal><PromotionFeature promotion={promotions[0]} /></Reveal> : null}
+
+            {catalogStatus === "ready" ? (
+              <div className="package-grid" aria-label="Paquetes de viaje disponibles">
+                {tours.map((tour, index) => (
+                  <Reveal delay={index * 70} key={tour.id}>
+                    <PackageCard item={tour} />
+                  </Reveal>
+                ))}
+              </div>
+            ) : (
+              <Reveal className="catalog-state">
+                <BrandJourneyIcon name="discover" />
+                <div>
+                  <h3>{catalogStatus === "empty" ? siteContent.packages.emptyTitle : siteContent.packages.unavailableTitle}</h3>
+                  <p>{catalogStatus === "empty" ? siteContent.packages.emptyBody : siteContent.packages.unavailableBody}</p>
                 </div>
+                <a className="button button--outline" href="#cotizar">Solicitar una propuesta</a>
               </Reveal>
-            ) : null}
+            )}
           </div>
         </section>
 
@@ -156,6 +175,7 @@ export function HomePage({ tours, promotions, contact }: HomePageProps) {
                         alt={tour.image ? `Vista de ${tour.name}` : experienceCategories[index % experienceCategories.length].alt}
                         fill
                         sizes="(max-width: 767px) 100vw, 33vw"
+                        unoptimized={isLoopbackImage(tour.image)}
                       />
                     </div>
                     <div className="experience-card__content">
@@ -216,7 +236,7 @@ export function HomePage({ tours, promotions, contact }: HomePageProps) {
               {planningBenefits.map((benefit, index) => (
                 <Reveal as="article" className="benefit-card" delay={index * 70} key={benefit.title}>
                   <span className="benefit-card__icon" aria-hidden="true">
-                    <Image src={benefit.icon} width={32} height={32} alt="" />
+                    <BrandJourneyIcon name={benefit.icon} />
                   </span>
                   <h3>{benefit.title}</h3>
                   <p>{benefit.body}</p>

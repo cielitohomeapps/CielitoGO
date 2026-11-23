@@ -64,6 +64,24 @@ npm run dev
 
 Abre [http://localhost:3001](http://localhost:3001). El proyecto usa ese puerto en desarrollo para no competir con el puerto `3000` predeterminado del backend. Si el backend está configurado y en ejecución, el frontend consulta sus endpoints públicos. Si no está disponible, la landing conserva contenido editorial claramente identificado y no simula respuestas exitosas.
 
+### Panel administrativo
+
+Con el backend ejecutándose en `http://localhost:3000` y `API_BASE_URL` configurada, abre:
+
+```text
+http://localhost:3001/admin/login
+```
+
+Inicia sesión con el correo y la contraseña definidos en `INITIAL_ADMIN_EMAIL` e
+`INITIAL_ADMIN_PASSWORD` al ejecutar el seed del backend. El panel incluye resumen,
+tours, promociones, cotizaciones, reservaciones y usuarios (esta última sección sólo
+para el rol `admin`).
+
+La autenticación utiliza un BFF de Next.js: el JWT permanece en una cookie `HttpOnly`,
+`SameSite=Lax` y nunca se expone en `localStorage` ni en variables `NEXT_PUBLIC_*`.
+Cerrar sesión elimina la cookie local; el backend todavía no ofrece revocación ni
+refresh token.
+
 Para probar una cotización real, el backend debe aceptar `POST /api/quotes` y `API_BASE_URL` debe apuntar a ese servidor. La confirmación de la interfaz sólo aparece después de recibir una respuesta satisfactoria del backend.
 
 ## Scripts

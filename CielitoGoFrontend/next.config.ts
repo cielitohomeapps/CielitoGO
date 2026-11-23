@@ -31,7 +31,14 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
     qualities: [75, 90],
     minimumCacheTTL: 86400,
-    remotePatterns: getBackendImagePattern(),
+    remotePatterns: [
+      ...getBackendImagePattern(),
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**/image/upload/**",
+      },
+    ],
   },
   async headers() {
     return [

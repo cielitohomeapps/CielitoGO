@@ -32,7 +32,7 @@ module.exports = {
       { id: uuidv4(), key: 'site_logo', value: '/images/logo.png', type: 'image', group: 'general', description: 'Logo del sitio', created_at: now, updated_at: now },
       { id: uuidv4(), key: 'site_email', value: 'info@cielitogo.com', type: 'text', group: 'contact', description: 'Email de contacto', created_at: now, updated_at: now },
       { id: uuidv4(), key: 'site_phone', value: '+5491112345678', type: 'text', group: 'contact', description: 'Teléfono de contacto', created_at: now, updated_at: now },
-      { id: uuidv4(), key: 'whatsapp_number', value: '+5491112345678', type: 'text', group: 'whatsapp', description: 'Número de WhatsApp', created_at: now, updated_at: now },
+      { id: uuidv4(), key: 'whatsapp_number', value: '+5214495831670', type: 'text', group: 'whatsapp', description: 'Número de WhatsApp', created_at: now, updated_at: now },
       { id: uuidv4(), key: 'hero_title', value: 'Explora la mejor experiencia turística', type: 'text', group: 'home', description: 'Título principal del hero', created_at: now, updated_at: now },
       { id: uuidv4(), key: 'hero_subtitle', value: 'Descubre los destinos más increíbles', type: 'text', group: 'home', description: 'Subtítulo del hero', created_at: now, updated_at: now },
       { id: uuidv4(), key: 'hero_image', value: '/images/hero-default.jpg', type: 'image', group: 'home', description: 'Imagen del hero', created_at: now, updated_at: now },

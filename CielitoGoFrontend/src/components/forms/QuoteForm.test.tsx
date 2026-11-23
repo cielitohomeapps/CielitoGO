@@ -6,6 +6,7 @@ import { QuoteForm } from "./QuoteForm";
 const validResponse = {
   quote: {
     id: "72f522d4-41c6-46c5-8cb7-4c6c65e15941",
+    code: "CG-2026-AB2CD",
     status: "new",
     createdAt: "2026-10-29T16:00:00.000Z",
   },
@@ -64,22 +65,26 @@ describe("QuoteForm", () => {
       minors: 1,
       travelers: 3,
     });
-    expect(await screen.findByRole("status")).toHaveTextContent(validResponse.quote.id);
+    expect(await screen.findByRole("status")).toHaveTextContent(validResponse.quote.code);
   });
 
-  it("prepara la cotización con los datos del formulario en WhatsApp", () => {
+  it("ofrece WhatsApp después de registrar la solicitud e incluye el folio", async () => {
     const openMock = vi.fn();
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(mockJsonResponse(201, validResponse)));
     vi.stubGlobal("open", openMock);
     render(<QuoteForm advisorUrl="https://wa.me/524491234567" />);
     fillRequiredFields();
 
-    fireEvent.click(screen.getByRole("button", { name: /preparar cotización por whatsapp/i }));
+    expect(screen.queryByRole("button", { name: /continuar a whatsapp/i })).not.toBeInTheDocument();
+    fireEvent.submit(screen.getByRole("button", { name: /enviar solicitud/i }).closest("form")!);
+    fireEvent.click(await screen.findByRole("button", { name: /continuar a whatsapp/i }));
 
     expect(openMock).toHaveBeenCalledOnce();
     const [openedUrl, target, features] = openMock.mock.calls[0] as [string, string, string];
     expect(target).toBe("_blank");
     expect(features).toContain("noopener");
     const message = new URL(openedUrl).searchParams.get("text");
+    expect(message).toContain(`Folio: ${validResponse.quote.code}`);
     expect(message).toContain("Nombre: Ana Viajera");
     expect(message).toContain("Destino: Patagonia");
   });

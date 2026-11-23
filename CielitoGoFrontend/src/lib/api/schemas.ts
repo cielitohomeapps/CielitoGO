@@ -160,6 +160,7 @@ export const quoteRequestSchema = z
 export const quoteResponseSchema = z.object({
   quote: z.object({
     id: z.string().uuid(),
+    code: z.string().regex(/^CG-\d{4}-[A-Z2-9]{5}$/),
     status: z.literal("new"),
     createdAt: z.string().min(1),
   }),

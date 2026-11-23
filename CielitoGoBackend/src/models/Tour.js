@@ -76,6 +76,9 @@ const Tour = sequelize.define('Tour', {
   imageUrl: {
     type: DataTypes.STRING(500),
   },
+  imagePublicId: {
+    type: DataTypes.STRING(500),
+  },
   isActive: {
     type: DataTypes.BOOLEAN,
     defaultValue: true,

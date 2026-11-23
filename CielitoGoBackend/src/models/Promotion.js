@@ -15,6 +15,7 @@ const Promotion = sequelize.define('Promotion', {
   restrictions: { type: DataTypes.JSON, allowNull: false, defaultValue: [] },
   conditions: { type: DataTypes.JSON, allowNull: false, defaultValue: [] },
   imageUrl: { type: DataTypes.STRING(500) },
+  imagePublicId: { type: DataTypes.STRING(500) },
   isActive: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
   isFeatured: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
   sortOrder: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },

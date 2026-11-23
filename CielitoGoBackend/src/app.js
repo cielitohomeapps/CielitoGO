@@ -28,7 +28,7 @@ app.use(express.json({
 }));
 app.use(express.urlencoded({ extended: true, limit: config.requestBodyLimit }));
 
-app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
+app.use('/uploads', express.static(config.upload.dir));
 app.use('/images', express.static(path.join(__dirname, '../public/images')));
 
 app.get('/health', (req, res) => {

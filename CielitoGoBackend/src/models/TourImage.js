@@ -15,6 +15,9 @@ const TourImage = sequelize.define('TourImage', {
     type: DataTypes.STRING(500),
     allowNull: false,
   },
+  publicId: {
+    type: DataTypes.STRING(500),
+  },
   alt: {
     type: DataTypes.STRING(200),
   },

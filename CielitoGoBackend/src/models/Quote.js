@@ -3,6 +3,7 @@ const { sequelize } = require('../database');
 
 const Quote = sequelize.define('Quote', {
   id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+  code: { type: DataTypes.STRING(40), allowNull: false, unique: true },
   customerId: { type: DataTypes.UUID },
   customerName: { type: DataTypes.STRING(200), allowNull: false },
   phone: { type: DataTypes.STRING(50), allowNull: false },

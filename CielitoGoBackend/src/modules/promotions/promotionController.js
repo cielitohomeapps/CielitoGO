@@ -1,7 +1,6 @@
-const fs = require('fs');
-const path = require('path');
 const { Op } = require('sequelize');
 const { sequelize, Promotion, PromotionImage, Tour } = require('../../models');
+const upload = require('../../middleware/upload');
 const createHttpError = require('../../utils/httpError');
 const { getPagination, paginationResponse } = require('../../utils/pagination');
 const toSlug = require('../../utils/slug');
@@ -25,15 +24,16 @@ const activeWhere = () => {
   const today = new Date().toISOString().slice(0, 10);
   return {
     isActive: true,
-    [Op.or]: [{ tourId: null }, { '$tour.isActive$': true }],
+    [Op.or]: [
+      { tourId: null },
+      sequelize.where(sequelize.col('tour.is_active'), true),
+    ],
     [Op.and]: [
       { [Op.or]: [{ startDate: null }, { startDate: { [Op.lte]: today } }] },
       { [Op.or]: [{ endDate: null }, { endDate: { [Op.gte]: today } }] },
     ],
   };
 };
-
-const toPublicPath = (url) => path.join(__dirname, '../../../public', url);
 
 exports.getAll = async (req, res, next) => {
   try {
@@ -73,22 +73,34 @@ exports.getById = async (req, res, next) => {
 };
 
 exports.create = async (req, res, next) => {
+  let imageStored = false;
   try {
     const data = pickFields(req.body);
     validateDateRange(data.startDate, data.endDate);
+    const storedImage = upload.getStoredImage(req.file);
     const promotion = await Promotion.create({
       ...data,
       tourId: data.tourId || null,
       slug: toSlug(data.title),
-      imageUrl: req.file ? `/uploads/${req.file.filename}` : null,
+      imageUrl: storedImage?.imageUrl || null,
+      imagePublicId: storedImage?.publicId || null,
     });
+    imageStored = true;
     res.status(201).json({ promotion });
   } catch (error) {
+    if (req.file && !imageStored) {
+      try {
+        await upload.removeStoredImage(upload.getStoredImage(req.file));
+      } catch (cleanupError) {
+        console.error('Unable to remove failed promotion upload:', cleanupError.message);
+      }
+    }
     next(error);
   }
 };
 
 exports.update = async (req, res, next) => {
+  let imageStored = false;
   try {
     const promotion = await Promotion.findByPk(req.params.id);
     if (!promotion) throw createHttpError(404, 'PROMOTION_NOT_FOUND', 'Promoción no encontrada');
@@ -100,20 +112,30 @@ exports.update = async (req, res, next) => {
     const endDate = Object.prototype.hasOwnProperty.call(updates, 'endDate') ? updates.endDate : promotion.endDate;
     validateDateRange(startDate, endDate);
 
-    let oldImagePath;
+    let oldImage;
     if (req.file) {
-      updates.imageUrl = `/uploads/${req.file.filename}`;
-      if (promotion.imageUrl) oldImagePath = toPublicPath(promotion.imageUrl);
+      const storedImage = upload.getStoredImage(req.file);
+      updates.imageUrl = storedImage.imageUrl;
+      updates.imagePublicId = storedImage.publicId;
+      oldImage = { imageUrl: promotion.imageUrl, publicId: promotion.imagePublicId };
     }
     await promotion.update(updates);
+    imageStored = true;
 
     try {
-      if (oldImagePath && fs.existsSync(oldImagePath)) fs.unlinkSync(oldImagePath);
+      if (oldImage?.imageUrl) await upload.removeStoredImage(oldImage);
     } catch (cleanupError) {
       console.error('Unable to remove previous promotion image:', cleanupError.message);
     }
     res.json({ promotion });
   } catch (error) {
+    if (req.file && !imageStored) {
+      try {
+        await upload.removeStoredImage(upload.getStoredImage(req.file));
+      } catch (cleanupError) {
+        console.error('Unable to remove failed promotion upload:', cleanupError.message);
+      }
+    }
     next(error);
   }
 };
@@ -130,25 +152,36 @@ exports.deactivate = async (req, res, next) => {
 };
 
 exports.addImage = async (req, res, next) => {
+  let imageStored = false;
   try {
     const promotion = await Promotion.findByPk(req.params.id);
     if (!promotion) throw createHttpError(404, 'PROMOTION_NOT_FOUND', 'Promoción no encontrada');
     if (!req.file) throw createHttpError(400, 'IMAGE_REQUIRED', 'Imagen requerida');
 
+    const storedImage = upload.getStoredImage(req.file);
     const image = await sequelize.transaction(async (transaction) => {
       if (req.body.isPrimary === true) {
         await PromotionImage.update({ isPrimary: false }, { where: { promotionId: promotion.id }, transaction });
       }
       return PromotionImage.create({
         promotionId: promotion.id,
-        imageUrl: `/uploads/${req.file.filename}`,
+        imageUrl: storedImage.imageUrl,
+        publicId: storedImage.publicId,
         alt: req.body.alt || promotion.title,
         sortOrder: req.body.sortOrder || 0,
         isPrimary: req.body.isPrimary || false,
       }, { transaction });
     });
+    imageStored = true;
     res.status(201).json({ image });
   } catch (error) {
+    if (req.file && !imageStored) {
+      try {
+        await upload.removeStoredImage(upload.getStoredImage(req.file));
+      } catch (cleanupError) {
+        console.error('Unable to remove failed promotion gallery upload:', cleanupError.message);
+      }
+    }
     next(error);
   }
 };
@@ -157,10 +190,9 @@ exports.deleteImage = async (req, res, next) => {
   try {
     const image = await PromotionImage.findOne({ where: { id: req.params.imageId, promotionId: req.params.id } });
     if (!image) throw createHttpError(404, 'PROMOTION_IMAGE_NOT_FOUND', 'Imagen de promoción no encontrada');
-    const imagePath = toPublicPath(image.imageUrl);
     await image.destroy();
     try {
-      if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
+      await upload.removeStoredImage({ imageUrl: image.imageUrl, publicId: image.publicId });
     } catch (cleanupError) {
       console.error('Unable to remove promotion image:', cleanupError.message);
     }

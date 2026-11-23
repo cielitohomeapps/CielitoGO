@@ -2,9 +2,9 @@ export const siteContent = {
   navigation: [
     { label: "Inicio", href: "#inicio" },
     { label: "Destinos", href: "#destinos" },
+    { label: "Paquetes", href: "#paquetes" },
     { label: "Experiencias", href: "#experiencias" },
     { label: "Servicios", href: "#servicios" },
-    { label: "Historias", href: "#historias" },
     { label: "Contacto", href: "#cotizar" },
   ],
   hero: {
@@ -18,7 +18,16 @@ export const siteContent = {
     eyebrow: "Descubre tu próximo destino",
     title: "Hay lugares que se visitan. Otros que se quedan contigo.",
     body: "Desde playas para desconectarte hasta ciudades llenas de cultura, encuentra el destino que conecta con tu manera de viajar.",
-    cta: "Explorar destinos",
+    cta: "Ver paquetes disponibles",
+  },
+  packages: {
+    eyebrow: "Paquetes Cielito Go",
+    title: "Tu próxima historia ya tiene punto de partida.",
+    body: "Explora los viajes disponibles, compara duración y precio, y solicita una cotización hecha a tu medida.",
+    emptyTitle: "Estamos preparando nuevas rutas.",
+    emptyBody: "Cuéntanos qué destino tienes en mente y diseñaremos una propuesta para ti.",
+    unavailableTitle: "Los paquetes están tomando una breve escala.",
+    unavailableBody: "No pudimos consultar el catálogo en este momento. Puedes enviarnos tu idea de viaje y te contactaremos.",
   },
   experiences: {
     eyebrow: "Tu manera de viajar",
@@ -102,17 +111,17 @@ export const planningBenefits = [
   {
     title: "Descubre",
     body: "Explora opciones publicadas por Cielito Go y encuentra ideas para comenzar.",
-    icon: "/images/figma/service-experience.svg",
+    icon: "discover",
   },
   {
     title: "Define",
     body: "Comparte destino, fechas y necesidades mediante una solicitud completa.",
-    icon: "/images/figma/service-hotel.svg",
+    icon: "define",
   },
   {
     title: "Cotiza",
     body: "Envía tus datos de viaje al canal real de cotizaciones, sin confirmaciones simuladas.",
-    icon: "/images/figma/service-flight.svg",
+    icon: "quote",
   },
 ] as const;
 

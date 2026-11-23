@@ -10,7 +10,7 @@ const common = {
     timestamps: true,
     underscored: true,
   },
-  ...(useSsl ? { dialectOptions: { ssl: { rejectUnauthorized: true } } } : {}),
+  ...(useSsl ? { dialectOptions: { ssl: { rejectUnauthorized: false } } } : {}),
 };
 
 const localConnection = (name) => ({
