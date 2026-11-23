@@ -33,7 +33,7 @@ services:
     runtime: node
     name: cielitogo-web
     rootDir: CielitoGoFrontend
-    buildCommand: npm ci && npm run build
+    buildCommand: npm ci --include=dev && npm run build
     startCommand: npm start
     healthCheckPath: /
     envVars:
