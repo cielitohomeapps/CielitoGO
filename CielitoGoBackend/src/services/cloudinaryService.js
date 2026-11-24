@@ -43,4 +43,18 @@ const deleteImage = async (publicId) => {
   });
 };
 
-module.exports = { uploadImage, deleteImage };
+const buildResizedImageUrl = (publicId, width, height) => {
+  if (!config.cloudinary.enabled || !publicId) {
+    throw new Error('Cloudinary no está configurado');
+  }
+  return cloudinary.url(publicId, {
+    secure: true,
+    width,
+    height,
+    crop: 'fill',
+    fetch_format: 'auto',
+    quality: 'auto',
+  });
+};
+
+module.exports = { uploadImage, deleteImage, buildResizedImageUrl };

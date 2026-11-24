@@ -16,6 +16,8 @@ const Quote = sequelize.define('Quote', {
   minors: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0, validate: { min: 0 } },
   budget: { type: DataTypes.DECIMAL(12, 2), validate: { min: 0 } },
   comments: { type: DataTypes.TEXT },
+  consentAcceptedAt: { type: DataTypes.DATE, allowNull: false },
+  privacyNoticeVersion: { type: DataTypes.STRING(50), allowNull: false },
   status: {
     type: DataTypes.ENUM('new', 'reviewing', 'contacted', 'sent', 'accepted', 'rejected', 'cancelled'),
     allowNull: false,

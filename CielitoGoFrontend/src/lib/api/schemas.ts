@@ -133,6 +133,8 @@ export const quoteRequestSchema = z
     returnDate: isoDate.nullable().optional(),
     budget: z.number().nonnegative().nullable().optional(),
     comments: z.string().max(5000).nullable().optional(),
+    consentAccepted: z.literal(true),
+    privacyNoticeVersion: z.string().trim().min(1).max(50),
   })
   .strict()
   .superRefine((value, context) => {

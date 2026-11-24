@@ -45,6 +45,8 @@ exports.create = async (req, res, next) => {
         code: generateQuoteCode(),
         minors: data.minors || 0,
         status: 'new',
+        consentAcceptedAt: new Date(),
+        privacyNoticeVersion: req.body.privacyNoticeVersion,
       }, { transaction });
       await QuoteStatusHistory.create({
         quoteId: created.id,
@@ -181,6 +183,8 @@ exports.convertToReservation = async (req, res, next) => {
         adults: quote.adults,
         minors: quote.minors,
         notes: req.body.notes || quote.comments,
+        consentAcceptedAt: quote.consentAcceptedAt,
+        privacyNoticeVersion: quote.privacyNoticeVersion,
         travelersList: req.body.travelersList || [],
         historyNote: 'Reservación creada desde cotización aceptada',
       }, { transaction, changedBy: req.user.id, status: 'pending' });

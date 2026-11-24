@@ -28,6 +28,13 @@ const diskStorage = multer.diskStorage({
 const storage = config.cloudinary.enabled ? multer.memoryStorage() : diskStorage;
 
 const fileFilter = (req, file, cb) => {
+  if (config.nodeEnv === 'production' && !config.cloudinary.enabled && !config.allowEphemeralUploads) {
+    const error = new Error('El almacenamiento persistente de imágenes no está configurado');
+    error.status = 503;
+    error.code = 'PERSISTENT_STORAGE_REQUIRED';
+    cb(error, false);
+    return;
+  }
   if (allowedMimeTypes.has(file.mimetype)) {
     cb(null, true);
   } else {
@@ -99,13 +106,21 @@ const validateImages = async (req, res, next) => {
 };
 
 const storeImage = (folder) => async (req, res, next) => {
-  if (!req.file || !config.cloudinary.enabled) return next();
+  const files = getFiles(req);
+  if (files.length === 0 || !config.cloudinary.enabled) return next();
   try {
-    const stored = await cloudinaryService.uploadImage(req.file.buffer, folder);
-    req.file.cloudinaryUrl = stored.url;
-    req.file.cloudinaryPublicId = stored.publicId;
+    for (const file of files) {
+      const stored = await cloudinaryService.uploadImage(file.buffer, folder);
+      file.cloudinaryUrl = stored.url;
+      file.cloudinaryPublicId = stored.publicId;
+    }
     next();
   } catch (error) {
+    try {
+      await removeFiles(files);
+    } catch (cleanupError) {
+      console.error('Unable to remove failed cloud upload:', cleanupError.message);
+    }
     error.status = 502;
     error.code = 'IMAGE_STORAGE_ERROR';
     error.message = 'No fue posible almacenar la imagen';

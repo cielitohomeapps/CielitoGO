@@ -23,6 +23,8 @@ const Reservation = sequelize.define('Reservation', {
     defaultValue: 'request',
   },
   notes: { type: DataTypes.TEXT },
+  consentAcceptedAt: { type: DataTypes.DATE, allowNull: false },
+  privacyNoticeVersion: { type: DataTypes.STRING(50), allowNull: false },
   cancelledAt: { type: DataTypes.DATE },
   cancellationReason: { type: DataTypes.TEXT },
 }, {

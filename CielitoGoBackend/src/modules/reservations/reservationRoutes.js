@@ -42,6 +42,8 @@ const editableValidators = [
 ];
 
 router.post('/', publicFormLimiter, [
+  body('consentAccepted').custom((value) => value === true).withMessage('Debes aceptar el aviso de privacidad'),
+  body('privacyNoticeVersion').isString().trim().isLength({ min: 1, max: 50 }),
   body('tourId').isUUID(),
   body('customerName').trim().isLength({ min: 2, max: 200 }),
   body('phone').trim().isLength({ min: 7, max: 50 }),

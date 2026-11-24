@@ -119,6 +119,19 @@ class WhatsAppService {
         { headers: this.getHeaders() }
       );
 
+      const messageData = response.data.messages?.[0];
+      if (messageData) {
+        await WhatsAppMessage.create({
+          waMessageId: messageData.id,
+          from: this.phoneNumberId,
+          to,
+          body: caption || null,
+          type: 'image',
+          mediaUrl: imageUrl,
+          direction: 'outgoing',
+          status: 'sent',
+        });
+      }
       return response.data;
     } catch (error) {
       console.error('Error sending WhatsApp image:', {
@@ -142,17 +155,40 @@ class WhatsAppService {
   handleIncomingMessage(messageData) {
     const { from, timestamp, type, text, image, id: waMessageId } = messageData;
 
-    return WhatsAppMessage.create({
-      waMessageId,
-      from,
-      to: this.phoneNumberId,
-      body: text?.body || null,
-      type: type || 'text',
-      mediaUrl: image?.link || null,
-      direction: 'incoming',
-      status: 'delivered',
-      contactName: messageData.contacts?.[0]?.profile?.name || null,
+    return WhatsAppMessage.findOrCreate({
+      where: { waMessageId },
+      defaults: {
+        waMessageId,
+        from,
+        to: this.phoneNumberId,
+        body: text?.body || null,
+        type: type || 'text',
+        mediaUrl: image?.link || null,
+        direction: 'incoming',
+        status: 'delivered',
+        contactName: messageData.contacts?.[0]?.profile?.name || null,
+      },
+    }).then(([message]) => message);
+  }
+
+  async handleStatusUpdate(statusData) {
+    const allowed = new Set(['sent', 'delivered', 'read', 'failed']);
+    if (!statusData?.id || !allowed.has(statusData.status)) return null;
+    const [updated] = await WhatsAppMessage.update(
+      { status: statusData.status, metadata: statusData.errors ? { errors: statusData.errors } : undefined },
+      { where: { waMessageId: statusData.id } }
+    );
+    return updated;
+  }
+
+  async verifyConfiguration() {
+    this.ensureConfigured();
+    const response = await axios.get(`${this.apiUrl}/${this.phoneNumberId}`, {
+      headers: this.getHeaders(),
+      params: { fields: 'display_phone_number,verified_name' },
+      timeout: 10000,
     });
+    return response.data;
   }
 
   async getMessages({ page = 1, limit = 50, from, status }) {

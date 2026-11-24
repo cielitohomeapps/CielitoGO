@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 
 type SubmissionState =
   | { status: "idle" }
@@ -12,6 +13,8 @@ type QuoteFormProps = {
   destinationOptions?: string[];
   advisorUrl?: string | null;
 };
+
+const PRIVACY_NOTICE_VERSION = process.env.NEXT_PUBLIC_PRIVACY_NOTICE_VERSION || "2026-11-24";
 
 function isWhatsAppUrl(value: string | null | undefined): value is string {
   if (!value) return false;
@@ -84,6 +87,8 @@ export function QuoteForm({ destinationOptions = [], advisorUrl }: QuoteFormProp
       returnDate: String(data.get("returnDate") ?? "") || undefined,
       budget: data.get("budget") ? Number(data.get("budget")) : undefined,
       comments: String(data.get("comments") ?? "").trim() || undefined,
+      consentAccepted: true as const,
+      privacyNoticeVersion: PRIVACY_NOTICE_VERSION,
     };
 
     setSubmission({ status: "submitting" });
@@ -280,7 +285,7 @@ export function QuoteForm({ destinationOptions = [], advisorUrl }: QuoteFormProp
 
       <label className="consent-field">
         <input name="dataConsent" type="checkbox" required />
-        <span>Acepto que estos datos se utilicen para responder mi solicitud de cotización. *</span>
+        <span>Acepto que estos datos se utilicen para responder mi solicitud conforme al <Link href="/privacidad" target="_blank">aviso de privacidad</Link>. *</span>
       </label>
 
       {submission.status === "error" ? <p className="form-message form-message--error" role="alert">{submission.message}</p> : null}

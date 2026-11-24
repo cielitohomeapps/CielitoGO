@@ -14,6 +14,12 @@ const navigation: Array<{ href: string; label: string; icon: AdminIconName; admi
   { href: "/admin/promotions", label: "Promociones", icon: "promotions" },
   { href: "/admin/quotes", label: "Cotizaciones", icon: "quotes" },
   { href: "/admin/reservations", label: "Reservaciones", icon: "reservations" },
+  { href: "/admin/customers", label: "Clientes", icon: "customers" },
+  { href: "/admin/pricing", label: "Tarifas", icon: "pricing" },
+  { href: "/admin/departures", label: "Salidas", icon: "departures" },
+  { href: "/admin/content", label: "Contenido", icon: "content" },
+  { href: "/admin/media", label: "Media", icon: "media" },
+  { href: "/admin/whatsapp", label: "WhatsApp", icon: "whatsapp" },
   { href: "/admin/users", label: "Equipo", icon: "users", adminOnly: true },
 ];
 

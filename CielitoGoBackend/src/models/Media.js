@@ -31,6 +31,9 @@ const Media = sequelize.define('Media', {
     type: DataTypes.STRING(500),
     allowNull: false,
   },
+  publicId: {
+    type: DataTypes.STRING(500),
+  },
   width: {
     type: DataTypes.INTEGER,
   },

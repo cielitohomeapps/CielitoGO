@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { QuoteForm } from "@/components/forms/QuoteForm";
 import { PackageCard, type PackageCardView } from "@/components/home/PackageCard";
 import { PromotionFeature, type PromotionView } from "@/components/home/PromotionFeature";
+import { BackendWakeUp } from "@/components/home/BackendWakeUp";
 import { Reveal } from "@/components/ui/Reveal";
 import { BrandJourneyIcon } from "@/components/ui/BrandJourneyIcon";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -132,6 +133,8 @@ export function HomePage({ tours, promotions, catalogStatus, contact }: HomePage
 
             {promotions.length ? <Reveal><PromotionFeature promotion={promotions[0]} /></Reveal> : null}
 
+            <BackendWakeUp visible={catalogStatus === "unavailable"} />
+
             {catalogStatus === "ready" ? (
               <div className="package-grid" aria-label="Paquetes de viaje disponibles">
                 {tours.map((tour, index) => (
@@ -140,16 +143,16 @@ export function HomePage({ tours, promotions, catalogStatus, contact }: HomePage
                   </Reveal>
                 ))}
               </div>
-            ) : (
+            ) : catalogStatus === "empty" ? (
               <Reveal className="catalog-state">
                 <BrandJourneyIcon name="discover" />
                 <div>
-                  <h3>{catalogStatus === "empty" ? siteContent.packages.emptyTitle : siteContent.packages.unavailableTitle}</h3>
-                  <p>{catalogStatus === "empty" ? siteContent.packages.emptyBody : siteContent.packages.unavailableBody}</p>
+                  <h3>{siteContent.packages.emptyTitle}</h3>
+                  <p>{siteContent.packages.emptyBody}</p>
                 </div>
                 <a className="button button--outline" href="#cotizar">Solicitar una propuesta</a>
               </Reveal>
-            )}
+            ) : null}
           </div>
         </section>
 

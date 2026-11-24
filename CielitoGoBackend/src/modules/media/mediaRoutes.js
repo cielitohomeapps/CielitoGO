@@ -22,12 +22,12 @@ router.post('/', authorize('admin', 'editor'), upload.single('file'), upload.val
   body('alt').optional().isString().isLength({ max: 200 }),
   body('category').optional().isString().isLength({ max: 100 }),
   validate,
-], mediaController.upload);
+], upload.storeImage('media'), mediaController.upload);
 router.post('/multiple', authorize('admin', 'editor'), upload.array('files', 10), upload.validateImages, [
   body('alt').optional().isString().isLength({ max: 200 }),
   body('category').optional().isString().isLength({ max: 100 }),
   validate,
-], mediaController.uploadMultiple);
+], upload.storeImage('media'), mediaController.uploadMultiple);
 
 router.put('/:id', authorize('admin', 'editor'), [
   param('id').isUUID(),

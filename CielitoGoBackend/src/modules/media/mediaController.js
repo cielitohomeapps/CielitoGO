@@ -4,6 +4,31 @@ const sharp = require('sharp');
 const { v4: uuidv4 } = require('uuid');
 const { sequelize, Media } = require('../../models');
 const config = require('../../config');
+const upload = require('../../middleware/upload');
+const cloudinaryService = require('../../services/cloudinaryService');
+
+const mediaRowFromFile = async (file, body, userId) => {
+  const input = file.buffer || file.path;
+  const metadata = await sharp(input, { limitInputPixels: config.upload.maxPixels }).metadata();
+  const stored = upload.getStoredImage(file);
+  const extension = path.extname(file.originalname || '') || `.${metadata.format || 'img'}`;
+  const filename = file.filename || `${uuidv4()}${extension}`;
+
+  return {
+    filename,
+    originalName: file.originalname,
+    mimeType: file.mimetype,
+    size: file.size,
+    path: file.path || stored.imageUrl,
+    url: stored.imageUrl,
+    publicId: stored.publicId,
+    width: metadata.width,
+    height: metadata.height,
+    alt: body.alt || '',
+    category: body.category || 'general',
+    uploadedBy: userId,
+  };
+};
 
 exports.getAll = async (req, res, next) => {
   try {
@@ -39,25 +64,15 @@ exports.upload = async (req, res, next) => {
       return res.status(400).json({ error: 'Archivo requerido' });
     }
 
-    const file = req.file;
-    const metadata = await sharp(file.path).metadata();
-
-    const media = await Media.create({
-      filename: file.filename,
-      originalName: file.originalname,
-      mimeType: file.mimetype,
-      size: file.size,
-      path: file.path,
-      url: `/uploads/${file.filename}`,
-      width: metadata.width,
-      height: metadata.height,
-      alt: req.body.alt || '',
-      category: req.body.category || 'general',
-      uploadedBy: req.user.id,
-    });
+    const media = await Media.create(await mediaRowFromFile(req.file, req.body, req.user.id));
 
     res.status(201).json({ media });
   } catch (error) {
+    try {
+      await upload.removeFiles(upload.getFiles(req));
+    } catch (cleanupError) {
+      console.error('Unable to remove failed media upload:', cleanupError.message);
+    }
     next(error);
   }
 };
@@ -69,27 +84,17 @@ exports.uploadMultiple = async (req, res, next) => {
     }
 
     const rows = await Promise.all(
-      req.files.map(async (file) => {
-        const metadata = await sharp(file.path).metadata();
-        return {
-          filename: file.filename,
-          originalName: file.originalname,
-          mimeType: file.mimetype,
-          size: file.size,
-          path: file.path,
-          url: `/uploads/${file.filename}`,
-          width: metadata.width,
-          height: metadata.height,
-          alt: req.body.alt || '',
-          category: req.body.category || 'general',
-          uploadedBy: req.user.id,
-        };
-      })
+      req.files.map((file) => mediaRowFromFile(file, req.body, req.user.id))
     );
     const mediaItems = await sequelize.transaction((transaction) => Media.bulkCreate(rows, { transaction }));
 
     res.status(201).json({ media: mediaItems });
   } catch (error) {
+    try {
+      await upload.removeFiles(upload.getFiles(req));
+    } catch (cleanupError) {
+      console.error('Unable to remove failed media uploads:', cleanupError.message);
+    }
     next(error);
   }
 };
@@ -128,7 +133,7 @@ exports.delete = async (req, res, next) => {
 
     await media.destroy();
     try {
-      if (fs.existsSync(media.path)) fs.unlinkSync(media.path);
+      await upload.removeStoredImage({ imageUrl: media.url, publicId: media.publicId });
     } catch (cleanupError) {
       console.error('Unable to remove media file:', cleanupError.message);
     }
@@ -145,6 +150,17 @@ exports.resize = async (req, res, next) => {
     const media = await Media.findByPk(req.params.id);
     if (!media) {
       return res.status(404).json({ error: 'Archivo no encontrado' });
+    }
+
+    if (media.publicId) {
+      const resizedUrl = cloudinaryService.buildResizedImageUrl(media.publicId, parseInt(width), parseInt(height));
+      await media.update({
+        url: resizedUrl,
+        path: resizedUrl,
+        width: parseInt(width),
+        height: parseInt(height),
+      });
+      return res.json({ media });
     }
 
     const ext = path.extname(media.filename);

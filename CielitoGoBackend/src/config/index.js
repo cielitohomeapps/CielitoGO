@@ -75,6 +75,8 @@ module.exports = {
     ),
   },
 
+  allowEphemeralUploads: process.env.ALLOW_EPHEMERAL_UPLOADS === 'true',
+
   requestBodyLimit: process.env.REQUEST_BODY_LIMIT || '1mb',
 
   rateLimit: {

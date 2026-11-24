@@ -41,6 +41,12 @@ exports.webhookHandler = async (req, res) => {
             });
           }
         }
+        const statuses = change.value.statuses;
+        if (Array.isArray(statuses)) {
+          for (const status of statuses) {
+            await whatsappService.handleStatusUpdate(status);
+          }
+        }
       }
     }
 

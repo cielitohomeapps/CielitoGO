@@ -49,6 +49,8 @@ exports.create = async (req, res, next) => {
       ...pickFields(req.body),
       customerId: null,
       travelersList: req.body.travelersList || [],
+      consentAcceptedAt: new Date(),
+      privacyNoticeVersion: req.body.privacyNoticeVersion,
     };
     const reservation = await sequelize.transaction((transaction) => createReservation(data, { transaction }));
     res.status(201).json({

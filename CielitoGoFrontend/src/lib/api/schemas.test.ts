@@ -12,6 +12,8 @@ const validQuote = {
   minors: 1,
   departureDate: "2027-01-10",
   returnDate: "2027-01-20",
+  consentAccepted: true,
+  privacyNoticeVersion: "2026-11-24",
 };
 
 describe("quoteRequestSchema", () => {

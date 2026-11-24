@@ -5,6 +5,12 @@ export type AdminIconName =
   | "quotes"
   | "reservations"
   | "users"
+  | "customers"
+  | "pricing"
+  | "departures"
+  | "content"
+  | "media"
+  | "whatsapp"
   | "menu"
   | "close"
   | "logout"
@@ -27,6 +33,12 @@ export function AdminIcon({ name, size = 20 }: { name: AdminIconName; size?: num
     quotes: <><path d="M5 4h14v13H9l-4 3V4Z" {...common} /><path d="M8 8h8M8 12h5" {...common} /></>,
     reservations: <><path d="M5 5h14v15H5zM8 3v4M16 3v4M5 9h14" {...common} /><path d="m9 14 2 2 4-4" {...common} /></>,
     users: <><circle cx="9" cy="8" r="3" {...common} /><path d="M3.5 19c.6-4 2.5-6 5.5-6s4.9 2 5.5 6" {...common} /><path d="M16 8.5a2.5 2.5 0 1 1 0 5M16.5 14c2.3.5 3.6 2.2 4 5" {...common} /></>,
+    customers: <><circle cx="12" cy="8" r="3" {...common} /><path d="M5 20c.7-4.5 3-6.5 7-6.5s6.3 2 7 6.5" {...common} /></>,
+    pricing: <><circle cx="12" cy="12" r="9" {...common} /><path d="M15 8.5c-.7-.6-1.6-.9-2.7-.9-1.7 0-2.8.8-2.8 2s1.2 1.8 2.9 2.2 2.8.8 2.8 2.3-1.3 2.3-3 2.3c-1.2 0-2.3-.4-3.1-1.1M12 5.5v13" {...common} /></>,
+    departures: <><path d="M4 7h16M7 4v6M17 4v6M5 7v13h14V7" {...common} /><path d="M8 13h3M13 13h3M8 17h3" {...common} /></>,
+    content: <><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5" {...common} /></>,
+    media: <><rect x="4" y="5" width="16" height="14" rx="1" {...common} /><circle cx="9" cy="10" r="1.5" {...common} /><path d="m6 17 4-4 3 3 2-2 3 3" {...common} /></>,
+    whatsapp: <><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4A8 8 0 1 1 20 11.5Z" {...common} /><path d="M9 8.5c.5 3 2 4.5 5 5" {...common} /></>,
     menu: <path d="M4 7h16M4 12h16M4 17h16" {...common} />,
     close: <path d="m6 6 12 12M18 6 6 18" {...common} />,
     logout: <><path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10" {...common} /></>,

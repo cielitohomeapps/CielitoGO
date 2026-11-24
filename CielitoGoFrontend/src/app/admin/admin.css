@@ -416,6 +416,11 @@
 .admin-form-actions { display: flex; justify-content: flex-end; gap: 0.75rem; padding: 1rem 0; }
 .admin-form-actions > button:not(.admin-primary-button) { min-height: 3rem; border: 1px solid var(--admin-border); padding: 0.78rem 1.15rem; background: white; color: var(--admin-body); cursor: pointer; }
 .admin-form-error { margin: 0; padding: 0.85rem 1rem; border-left: 3px solid #8f2f2b; background: #fff1f0; color: #8f2f2b; font-size: 0.72rem; }
+.admin-form-success { margin: 0; padding: 0.85rem 1rem; border-left: 3px solid #17624d; background: #e8f4ef; color: #17624d; font-size: 0.72rem; }
+.admin-quick-form { display: grid; gap: 1rem; margin-top: 2rem; padding: 1.5rem; border: 1px solid var(--admin-border); background: white; }
+.admin-quick-form h2 { color: var(--admin-pine); font-size: 1.5rem; }
+.admin-quick-form__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.admin-quick-form .admin-primary-button { justify-self: start; }
 
 .admin-login {
   display: grid;
@@ -479,6 +484,7 @@
   .admin-loading__metrics,
   .admin-loading__panels { grid-template-columns: 1fr; }
   .admin-form-grid { grid-template-columns: 1fr; }
+  .admin-quick-form__grid { grid-template-columns: 1fr; }
   .admin-field--wide { grid-column: auto; }
   .admin-table-wrap { overflow: visible; }
   .admin-table,

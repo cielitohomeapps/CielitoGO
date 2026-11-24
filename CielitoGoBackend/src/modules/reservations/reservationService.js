@@ -82,6 +82,8 @@ const createReservation = async (data, options) => {
     minors: data.minors || 0,
     status,
     notes: data.notes || null,
+    consentAcceptedAt: data.consentAcceptedAt || new Date(),
+    privacyNoticeVersion: data.privacyNoticeVersion || 'administrative-entry',
   }, { transaction });
 
   if (data.travelersList?.length) {

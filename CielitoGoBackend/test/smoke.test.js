@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const { spawnSync } = require('node:child_process');
 const express = require('express');
+const sharp = require('sharp');
 const { sequelize } = require('../src/database');
 
 process.env.NODE_ENV = 'test';
@@ -12,6 +13,8 @@ process.env.WHATSAPP_APP_SECRET = 'test-whatsapp-app-secret';
 const app = require('../src/app');
 const upload = require('../src/middleware/upload');
 const errorHandler = require('../src/middleware/errorHandler');
+const config = require('../src/config');
+const cloudinaryService = require('../src/services/cloudinaryService');
 
 test('database dialect is PostgreSQL', () => {
   assert.equal(sequelize.getDialect(), 'postgres');
@@ -132,6 +135,58 @@ test('upload validation rejects spoofed image content', async () => {
     assert.equal(body.code, 'INVALID_IMAGE_CONTENT');
   } finally {
     await new Promise((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
+  }
+});
+
+test('production uploads fail closed without persistent storage', async () => {
+  const previous = {
+    nodeEnv: config.nodeEnv,
+    cloudinaryEnabled: config.cloudinary.enabled,
+    allowEphemeralUploads: config.allowEphemeralUploads,
+  };
+  config.nodeEnv = 'production';
+  config.cloudinary.enabled = false;
+  config.allowEphemeralUploads = false;
+
+  const uploadApp = express();
+  uploadApp.post('/upload', upload.single('file'), (req, res) => res.status(204).end());
+  uploadApp.use(errorHandler);
+  const server = uploadApp.listen(0, '127.0.0.1');
+  await new Promise((resolve) => server.once('listening', resolve));
+
+  try {
+    const image = await sharp({ create: { width: 2, height: 2, channels: 3, background: '#ffffff' } }).png().toBuffer();
+    const form = new FormData();
+    form.append('file', new Blob([image], { type: 'image/png' }), 'image.png');
+    const response = await fetch(`http://127.0.0.1:${server.address().port}/upload`, { method: 'POST', body: form });
+    assert.equal(response.status, 503);
+    assert.equal((await response.json()).code, 'PERSISTENT_STORAGE_REQUIRED');
+  } finally {
+    config.nodeEnv = previous.nodeEnv;
+    config.cloudinary.enabled = previous.cloudinaryEnabled;
+    config.allowEphemeralUploads = previous.allowEphemeralUploads;
+    await new Promise((resolve) => server.close(resolve));
+  }
+});
+
+test('Cloudinary storage annotates every file in a multiple upload', async () => {
+  const previousEnabled = config.cloudinary.enabled;
+  const originalUploadImage = cloudinaryService.uploadImage;
+  config.cloudinary.enabled = true;
+  let sequence = 0;
+  cloudinaryService.uploadImage = async () => {
+    sequence += 1;
+    return { url: `https://res.cloudinary.com/test/image/upload/media-${sequence}.png`, publicId: `media-${sequence}` };
+  };
+  const req = { files: [{ buffer: Buffer.from('a') }, { buffer: Buffer.from('b') }] };
+
+  try {
+    await new Promise((resolve, reject) => upload.storeImage('media')(req, {}, (error) => (error ? reject(error) : resolve())));
+    assert.equal(req.files[0].cloudinaryPublicId, 'media-1');
+    assert.equal(req.files[1].cloudinaryPublicId, 'media-2');
+  } finally {
+    config.cloudinary.enabled = previousEnabled;
+    cloudinaryService.uploadImage = originalUploadImage;
   }
 });
 

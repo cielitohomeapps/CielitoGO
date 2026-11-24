@@ -6,10 +6,15 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "node --test",
+    "test": "node --test test/smoke.test.js test/workflow.test.js test/whatsappService.test.js",
+    "test:integration": "node --test test/integration.test.js",
     "migrate": "npx sequelize-cli db:migrate",
     "migrate:undo": "npx sequelize-cli db:migrate:undo",
     "audit:db-security": "node scripts/auditDatabaseSecurity.js",
+    "backup": "node scripts/backupDatabase.js",
+    "restore": "node scripts/restoreDatabase.js",
+    "retention": "node scripts/applyDataRetention.js",
+    "verify:whatsapp": "node scripts/verifyWhatsApp.js",
     "seed": "npx sequelize-cli db:seed:all",
     "seed:undo": "npx sequelize-cli db:seed:undo:all"
   },

@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: cielito_go_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d cielito_go_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    defaults:
+      run:
+        working-directory: CielitoGoBackend
+    env:
+      NODE_ENV: test
+      JWT_SECRET: integration-test-secret-with-at-least-32-chars
+      DB_TEST_URL: postgresql://postgres:postgres@127.0.0.1:5432/cielito_go_test
+      DB_SSL: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: CielitoGoBackend/package-lock.json
+      - run: npm ci
+      - run: npm audit --omit=dev --audit-level=high
+      - run: npm run migrate
+      - run: npm test
+      - run: npm run test:integration
+      - run: npm run backup -- /tmp/cielito-go-ci.dump
+      - run: npm run restore -- /tmp/cielito-go-ci.dump --confirm-restore
+        env:
+          ALLOW_DATABASE_RESTORE: "true"
+      - run: npm run audit:db-security
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: CielitoGoFrontend
+    env:
+      API_BASE_URL: http://127.0.0.1:3000
+      NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3001
+      TRUST_BACKEND_PUBLIC_SETTINGS: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: CielitoGoFrontend/package-lock.json
+      - run: npm ci --include=dev
+      - run: npm audit --omit=dev --audit-level=high
+      - run: npm run check

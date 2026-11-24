@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { siteContent } from "@/content/es";
 
@@ -46,7 +47,7 @@ export function Footer({ email, instagramUrl, facebookUrl }: FooterProps) {
         <div>
           <h2 className="site-footer__heading">Información</h2>
           <ul className="site-footer__links">
-            <li><span>Aviso de privacidad pendiente de publicación</span></li>
+            <li><Link href="/privacidad">Aviso de privacidad</Link></li>
             <li><span>Términos comerciales pendientes</span></li>
           </ul>
         </div>

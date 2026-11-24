@@ -2,5 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3001";
-  return [{ url: baseUrl, lastModified: new Date(), changeFrequency: "weekly", priority: 1 }];
+  return [
+    { url: baseUrl, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
+    { url: new URL("/privacidad", baseUrl).toString(), lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
+  ];
 }
