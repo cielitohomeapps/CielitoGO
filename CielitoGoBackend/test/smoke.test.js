@@ -20,6 +20,19 @@ test('database dialect is PostgreSQL', () => {
   assert.equal(sequelize.getDialect(), 'postgres');
 });
 
+test('Render web services trust one proxy by default and honor an explicit override', () => {
+  const env = { ...process.env, RENDER: 'true', RENDER_SERVICE_TYPE: 'web' };
+  for (const [override, expected] of [['', '1'], ['false', 'false']]) {
+    const result = spawnSync(process.execPath, ['-e', "console.log(require('../src/app').get('trust proxy'))"], {
+      cwd: __dirname,
+      env: { ...env, TRUST_PROXY: override },
+      encoding: 'utf8',
+    });
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.stdout.trim(), expected);
+  }
+});
+
 const withServer = async (callback) => {
   const server = app.listen(0, '127.0.0.1');
   await new Promise((resolve) => server.once('listening', resolve));

@@ -19,7 +19,8 @@ const positiveInteger = (value, fallback) => {
 };
 
 const parseTrustProxy = (value) => {
-  if (!value || value === 'false') return false;
+  if (!value) return process.env.RENDER === 'true' && process.env.RENDER_SERVICE_TYPE === 'web' ? 1 : false;
+  if (value === 'false') return false;
   if (value === 'true') return 1;
   const parsed = Number.parseInt(value, 10);
   return Number.isInteger(parsed) && parsed >= 0 ? parsed : false;

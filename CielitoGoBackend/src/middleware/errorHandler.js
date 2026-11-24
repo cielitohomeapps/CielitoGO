@@ -46,6 +46,15 @@ const errorHandler = (err, req, res, next) => {
     return res.status(400).json({ success: false, code: 'INVALID_REFERENCE', message: 'Referencia inválida' });
   }
 
+  if (req.user && err.name === 'SequelizeDatabaseError'
+      && ['42703', '42P01'].includes(err.original?.code)) {
+    return res.status(503).json({
+      success: false,
+      code: 'DATABASE_SCHEMA_OUTDATED',
+      message: 'Faltan tablas o columnas requeridas. Revisa las migraciones de la base de datos del backend.',
+    });
+  }
+
   if (err.status && err.status < 500) {
     return res.status(err.status).json({
       success: false,

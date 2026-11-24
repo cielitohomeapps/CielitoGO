@@ -28,7 +28,7 @@ API: `NODE_ENV`, `DATABASE_URL`, `DB_SSL`, `JWT_SECRET`, `TRUST_PROXY`, `FRONTEN
 ## Particularidades Render/Supabase
 
 - Usar la cadena **Session pooler** de Supabase si Render no tiene salida IPv6. Host `*.pooler.supabase.com:5432` y usuario `postgres.<project-ref>`.
-- En el plan gratuito, la API puede suspenderse por inactividad. El frontend llama en segundo plano a `/api/backend-status`, que espera hasta 75 segundos por `/health`; si el catálogo no cargó, muestra el arranque, invalida la caché y refresca la portada automáticamente. No sustituye una instancia permanente para producción.
+- En el plan gratuito, la API puede suspenderse por inactividad. Al abrir la portada, el navegador consulta `/api/backend-status` y reintenta durante un máximo de 90 segundos. La ruta confirma la respuesta JSON de `/ready` (Express y PostgreSQL). Si el catálogo no cargó, la portada solicita invalidar la caché y se actualiza al confirmar que la API está lista.
 - El build command efectivo de un servicio ya creado puede conservarse en el panel aunque cambie `render.yaml`; sincronizar Blueprint o editar Settings.
 - `NODE_ENV=production` omite devDependencies con `npm ci`; el frontend requiere `--include=dev` para compilar TypeScript.
 - El filesystem del servicio es efímero. Cloudinary es la vía implementada para tours, promociones y `media`; las cargas fallan con 503 en producción si no está configurado, salvo aceptación explícita mediante `ALLOW_EPHEMERAL_UPLOADS=true`.

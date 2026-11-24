@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const WAKE_TIMEOUT_MS = 75_000;
+const PROBE_TIMEOUT_MS = 8_000;
 
 const response = (body: Record<string, unknown>, status: number) =>
   NextResponse.json(body, {
@@ -24,7 +24,7 @@ export async function GET(request: Request) {
     if (!["http:", "https:"].includes(baseUrl.protocol) || baseUrl.username || baseUrl.password) {
       throw new Error("Invalid API URL");
     }
-    healthUrl = new URL("/health", baseUrl.origin);
+    healthUrl = new URL("/ready", baseUrl.origin);
   } catch {
     return response({ ready: false, code: "INVALID_API_CONFIGURATION" }, 503);
   }
@@ -33,14 +33,17 @@ export async function GET(request: Request) {
   try {
     const backendResponse = await fetch(healthUrl, {
       cache: "no-store",
+      redirect: "error",
       headers: { Accept: "application/json" },
       signal: AbortSignal.any([
         request.signal,
-        AbortSignal.timeout(WAKE_TIMEOUT_MS),
+        AbortSignal.timeout(PROBE_TIMEOUT_MS),
       ]),
     });
 
-    if (!backendResponse.ok) {
+    if (!backendResponse.ok ||
+        !backendResponse.headers.get("content-type")?.includes("application/json") ||
+        (await backendResponse.json()).status !== "ready") {
       return response({
         ready: false,
         code: "BACKEND_NOT_READY",
@@ -48,7 +51,9 @@ export async function GET(request: Request) {
       }, 503);
     }
 
-    revalidatePath("/");
+    if (new URL(request.url).searchParams.get("refresh") === "1") {
+      revalidatePath("/");
+    }
     return response({
       ready: true,
       elapsedMs: Date.now() - startedAt,

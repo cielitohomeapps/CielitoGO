@@ -37,6 +37,18 @@ Configura además las variables `WHATSAPP_*` sólo si se activará la integraci�
 
 Después de guardar `API_BASE_URL` o `NEXT_PUBLIC_SITE_URL`, ejecuta una nueva construcción del frontend para que Next.js use los valores también durante el build.
 
+## Migraciones del backend en Render Free
+
+Render reserva el comando Pre-Deploy para servicios compatibles de pago. En el servicio gratuito del backend, usa estos valores en **Settings** para aplicar las migraciones antes de arrancar la API:
+
+| Campo | Valor |
+| --- | --- |
+| Root Directory | `CielitoGoBackend` |
+| Build Command | `npm ci --include=dev` |
+| Start Command | `npm run migrate && npm start` |
+
+En **Environment**, configura `NODE_ENV=production` y `TRUST_PROXY=1`. El inicio usa la misma `DATABASE_URL` que la API y Sequelize aplica sólo migraciones pendientes. Verifica en los logs del primer arranque las migraciones `20261124000001-add-media-public-id` y `20261124000002-add-privacy-consent`, o el mensaje que confirma que la base ya está al día. Aplica esta configuración en el servicio del backend, no en el frontend.
+
 ## Validación posterior
 
 1. Abre `https://<api>/health`; debe responder JSON con `status: "ok"`.
@@ -46,4 +58,4 @@ Después de guardar `API_BASE_URL` o `NEXT_PUBLIC_SITE_URL`, ejecuta una nueva c
 
 ## Datos subidos por usuarios
 
-El backend guarda cargas en `public/uploads`. El sistema de archivos normal de un Web Service de Render no es persistente entre despliegues ni reinicios. Antes de habilitar carga de media en producción, usa almacenamiento de objetos (recomendado) o un disco persistente de Render en un plan compatible.
+Para subir imágenes en producción, configura `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` y `CLOUDINARY_API_SECRET` en el backend. Sin Cloudinary, el backend bloquea las cargas de producción de forma predeterminada porque el disco local de Render es efímero.
